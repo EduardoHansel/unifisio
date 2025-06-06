@@ -1,9 +1,7 @@
 import json
-from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-
 from .forms import PacienteForm
 from .models import Paciente
 
@@ -40,3 +38,11 @@ def criar_paciente(request):
     except Exception as e:
         # Captura outros erros inesperados
         return JsonResponse({'error': f'Ocorreu um erro interno: {str(e)}'}, status=500)
+
+def listar_pacientes(request):
+    if request.method == 'GET':
+        pacientes = Paciente.objects.all()
+
+        data = list(pacientes.values('id', 'nome', 'cpf', 'sexo', 'data_nascimento', 'contato_1', 'contato_2'))
+
+        return JsonResponse(data, safe=False)
